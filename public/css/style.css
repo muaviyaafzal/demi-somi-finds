@@ -539,7 +539,12 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
   border-radius: 50%;
   overflow: hidden;
   background-color: #241a33;
-  box-shadow: var(--shadow-sm);
+  /* Gold ring + soft gold halo: the dark badge sits on a dark navbar,
+     so without a ring the DSF monogram is faint at normal size. The
+     ring is a box-shadow (not a border) so the 58px size never changes. */
+  box-shadow: 0 0 0 2px var(--color-accent),
+    0 0 24px rgba(201, 162, 75, 0.55),
+    var(--shadow-sm);
 }
 .brand-logo-badge img {
   display: block;
@@ -714,9 +719,7 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
   flex-direction: column;
   box-shadow: var(--shadow-sm);
   transition: transform var(--duration-med) var(--ease-out),
-    box-shadow var(--duration-med) var(--ease-out),
-    opacity var(--duration-med) var(--ease-out),
-    filter var(--duration-med) var(--ease-out);
+    box-shadow var(--duration-med) var(--ease-out);
   will-change: transform;
 }
 .product-card .card-media { position: relative; overflow: hidden; aspect-ratio: 4 / 5; background: var(--color-surface); }
@@ -793,33 +796,24 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 }
 .product-card .btn { padding: 10px 20px; font-size: 0.9rem; }
 
-/* KEY FEATURE — product hover highlight:
-   the hovered card lifts + glows, every other card dims + softens. */
+/* Product hover: the hovered card lifts + glows. It must NEVER dim the
+   other cards — name, price and specs stay at full contrast at first
+   glance, with or without hovering (the old dim-others behavior was
+   removed: it washed every non-hovered card out). */
 @media (hover: hover) and (pointer: fine) {
-  .products-grid:hover .product-card:not(:hover) {
-    opacity: 0.5;
-    filter: blur(1px) saturate(0.8);
-    transform: scale(0.985);
-  }
   .product-card:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: var(--shadow-glow);
     border-color: var(--color-primary-soft);
-    opacity: 1;
-    filter: none;
     z-index: 2;
   }
   .product-card:hover .card-media > img { transform: scale(1.06); }
 }
-/* Touch equivalent: tap a card to highlight it. */
+/* Touch equivalent: tap a card to lift it (no dimming of the others). */
 .product-card.is-active {
   transform: translateY(-6px) scale(1.01);
   box-shadow: var(--shadow-glow);
   border-color: var(--color-primary-soft);
-}
-.products-grid.has-active .product-card:not(.is-active) {
-  opacity: 0.55;
-  filter: blur(1px) saturate(0.85);
 }
 
 .no-results { text-align: center; color: var(--color-text-soft); padding: var(--space-4) 0; }
@@ -961,27 +955,30 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 .disclosure { color: var(--color-text-faint); font-size: 0.85rem; }
 .copyright { color: var(--color-text-faint); font-size: 0.88rem; margin: 0; }
 
-.social-icons { display: flex; gap: 10px; margin-top: var(--space-2); }
+.social-icons { display: flex; gap: 12px; margin-top: var(--space-2); }
 /* Social icons show the REAL brand marks in the REAL brand colors
    (the SVGs carry their own fills), so hover must never recolor them —
-   it only lifts the button. */
+   it only lifts the button. The chip is white on purpose: the brand
+   glyphs — above all TikTok's black note — need a light background to
+   read bold on the dark default theme, and they sit at full opacity
+   with no translucency anywhere. */
 .social-icon {
-  width: 42px; height: 42px;
+  width: 52px; height: 52px;
   display: inline-flex; align-items: center; justify-content: center;
   border-radius: 50%;
-  background: var(--color-card);
-  border: 1.5px solid var(--color-border);
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   transition: transform var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
 }
-.social-icon svg { width: 20px; height: 20px; }
+.social-icon svg { width: 26px; height: 26px; }
 .social-icon:hover {
   transform: translateY(-4px) scale(1.06);
   box-shadow: var(--shadow-md);
   text-decoration: none;
 }
 .social-icon.disabled {
-  opacity: 0.35;
   cursor: not-allowed;
   pointer-events: none;
 }

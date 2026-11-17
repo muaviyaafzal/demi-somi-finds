@@ -335,15 +335,13 @@
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') openModal(id);
       });
-      // Touch tap-highlight equivalent.
+      // Touch tap-highlight equivalent (lift only — never dims others).
       if (isTouch) {
         card.addEventListener('click', () => {
           const wasActive = card.classList.contains('is-active');
           $$('.product-card.is-active', grid).forEach((c) => c.classList.remove('is-active'));
-          grid.classList.remove('has-active');
           if (!wasActive) {
             card.classList.add('is-active');
-            grid.classList.add('has-active');
           }
         });
       }
