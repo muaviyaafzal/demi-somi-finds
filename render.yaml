@@ -1,7 +1,15 @@
 # Render blueprint — one-click deploy for Demi Somi Finds.
 # Push this project to a GitHub repo, then in Render choose
 # "New +" -> "Blueprint" and point it at the repo.
-# Render reads this file and creates the web service + persistent disk.
+# Render reads this file and creates the free web service.
+#
+# NOTE (free plan): Render's free tier does NOT allow persistent disks,
+# so there is no disk here. The SQLite database and uploaded images
+# live on the service's ephemeral filesystem and are wiped on every
+# restart/redeploy. The build runs the seed script, so the 5 demo
+# products come back automatically — but products added in the admin
+# panel will be lost on a restart. For permanent storage, upgrade the
+# service to the Starter plan and add a disk (see README).
 services:
   - type: web
     name: demi-somi-finds
@@ -14,10 +22,3 @@ services:
         value: production
       - key: JWT_SECRET
         generateValue: true
-    # Persistent disk: WITHOUT this, Render's free service wipes the
-    # SQLite database and uploaded images on every restart/deploy.
-    # The free tier includes a small disk; 1 GB is plenty for this store.
-    disk:
-      name: demi-somi-data
-      mountPath: /opt/render/project/src/data
-      sizeGB: 1
