@@ -64,7 +64,7 @@ Open the **Store Settings** tab:
 - **Contact email** — shown on the Contact section (visitors click it to email you).
 - **Trust badges** — the three "Why choose us" cards (defaults: Cruelty-free finds, Secure checkout, Easy returns).
 - **Affiliate disclosure** + **Show affiliate disclosure** — the footer line about affiliate links; uncheck to hide it.
-- **Store theme** — pick one of 5 two-color themes (Lavender + Terracotta is the default). Click a swatch, then **Save Settings** — the whole store changes colors instantly for every visitor.
+- **Store theme** — pick one of 5 two-color themes (Plum + Gold, the logo's own colors, is the default). Click a swatch, then **Save Settings** — the whole store changes colors instantly for every visitor.
 
 Click **Save Settings**. Everything updates on the public store immediately.
 

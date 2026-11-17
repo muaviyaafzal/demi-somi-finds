@@ -20,7 +20,7 @@ Short list of the decisions I made while building the store, so you can change a
 
 ## Design
 - **Fonts: Fraunces** (elegant serif for headings) + **Inter** (clean sans for body) from Google Fonts.
-- **Palette:** soft lavender `#8E7CC3`–`#B8A9E0`, sage `#A8C5A0`, warm terracotta/coral accent, blush pink highlight, warm cream background `#FAF6F1`, soft charcoal text (never pure black).
+- **Palette:** deep plum `#4A2145`, lavender `#B8A9E0` / `#A78BDA`, gold `#C9A24B` (the logo's own colors), warm cream background `#FAF5EE`, soft charcoal text (never pure black).
 - **Motion:** scroll reveals, hero parallax, the product hover-highlight (hovered card lifts and glows while the others dim), magnetic buttons, custom cursor with a "View" label, scroll progress bar, and a skippable intro under 2 seconds. All motion respects `prefers-reduced-motion` and is disabled on touch devices.
 
 ## Hosting

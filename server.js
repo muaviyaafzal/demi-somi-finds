@@ -603,7 +603,7 @@ app.delete('/api/admin/uploads', requireAuth, requireFullAdmin, (req, res) => {
 /* ------------------------------------------------------------------ */
 /* Admin: settings                                                     */
 /* ------------------------------------------------------------------ */
-// Store themes (two-color combinations). 'lavender' is the default.
+// Store themes (two-color combinations). 'lavender' is the default — the "Plum + Gold" logo-colors theme (key kept as 'lavender' so existing installs keep working).
 const THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage'];
 
 const SETTING_KEYS = [
