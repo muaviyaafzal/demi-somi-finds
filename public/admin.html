@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Demi Somi Finds</title>
+  <meta name="description" content="Admin panel for Demi Somi Finds. Manage products, images, social links and store settings.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-shell">
+
+    <!-- ============ LOGIN VIEW ============ -->
+    <main id="loginView" class="auth-view" hidden>
+      <div class="auth-card">
+        <div class="auth-mark" aria-hidden="true">DS</div>
+        <h1>Demi Somi Finds</h1>
+        <p class="auth-sub">Admin sign in</p>
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label for="loginUsername">Username</label>
+            <input id="loginUsername" type="text" autocomplete="username" required>
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" autocomplete="current-password" required>
+          </div>
+          <p id="loginError" class="form-error" role="alert" hidden></p>
+          <button class="btn btn-primary btn-block" type="submit" id="loginBtn">Sign In</button>
+        </form>
+        <p class="auth-hint">First time here? Use the demo credentials given at delivery, then create your own.</p>
+        <p class="auth-back"><a href="/">← Back to the store</a></p>
+      </div>
+    </main>
+
+    <!-- ============ FORCED CREDENTIAL CHANGE (first login) ============ -->
+    <main id="changeView" class="auth-view" hidden>
+      <div class="auth-card">
+        <div class="auth-mark" aria-hidden="true">DS</div>
+        <h1>Create your own credentials</h1>
+        <p class="auth-sub">This is your first sign-in with the demo account. Choose your own username and password now. After you save, the demo credentials stop working permanently.</p>
+        <form id="changeForm" novalidate>
+          <div class="field">
+            <label for="newUsername">New username</label>
+            <input id="newUsername" type="text" autocomplete="username" required minlength="1" maxlength="60" placeholder="e.g. demisomi">
+            <p class="field-hint">Letters, numbers, dot, underscore or hyphen.</p>
+          </div>
+          <div class="field">
+            <label for="newPassword">New password</label>
+            <input id="newPassword" type="password" autocomplete="new-password" required>
+            <div class="strength" aria-hidden="true">
+              <div id="strengthBar" class="strength-bar"></div>
+            </div>
+            <p id="strengthLabel" class="field-hint">At least 10 characters, with upper + lowercase, a number and a special character.</p>
+          </div>
+          <div class="field">
+            <label for="confirmPassword">Confirm new password</label>
+            <input id="confirmPassword" type="password" autocomplete="new-password" required>
+          </div>
+          <p id="changeError" class="form-error" role="alert" hidden></p>
+          <button class="btn btn-primary btn-block" type="submit" id="changeBtn">Save My Credentials</button>
+        </form>
+      </div>
+    </main>
+
+    <!-- ============ DASHBOARD ============ -->
+    <div id="dashboardView" hidden>
+      <header class="admin-header">
+        <div class="container admin-header-inner">
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true">DS</span>
+            <span>Demi Somi Finds <small>Admin</small></span>
+          </a>
+          <div class="admin-header-actions">
+            <a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener noreferrer">View Store ↗</a>
+            <span id="adminUserLabel" class="admin-user"></span>
+            <button id="logoutBtn" class="btn btn-secondary btn-sm" type="button">Logout</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="container admin-layout">
+        <nav class="admin-tabs" aria-label="Admin sections">
+          <button type="button" class="admin-tab active" data-tab="products">Products</button>
+          <button type="button" class="admin-tab" data-tab="productForm">Add Product</button>
+          <button type="button" class="admin-tab" data-tab="social">Social Links</button>
+          <button type="button" class="admin-tab" data-tab="settings">Store Settings</button>
+          <button type="button" class="admin-tab" data-tab="legal">Legal Pages</button>
+          <button type="button" class="admin-tab" data-tab="account">Account</button>
+        </nav>
+
+        <main class="admin-main">
+          <!-- Products list -->
+          <section id="tab-products" class="admin-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Products</h2>
+                <p class="panel-sub">Drag the handle to reorder. Changes show on the store instantly.</p>
+              </div>
+              <button id="addProductBtn" class="btn btn-primary" type="button">+ Add Product</button>
+            </div>
+            <div id="productList" class="product-list" aria-live="polite"></div>
+            <p id="productEmpty" class="empty-note" hidden>No products yet. Add your first one!</p>
+          </section>
+
+          <!-- Product form -->
+          <section id="tab-productForm" class="admin-panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h2 id="productFormTitle">Add Product</h2>
+                <p class="panel-sub">Fill in the details. The buy link is optional — without it, visitors see “Contact to order” instead of a Buy button.</p>
+              </div>
+            </div>
+            <form id="productForm" novalidate>
+              <input type="hidden" id="productId" value="">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="pName">Product name *</label>
+                  <input id="pName" type="text" required maxlength="120" placeholder="Velvet Rose Matte Lipstick">
+                </div>
+                <div class="field">
+                  <label for="pTitle">Short title / subtitle</label>
+                  <input id="pTitle" type="text" maxlength="120" placeholder="Matte Comfort Lipstick">
+                </div>
+                <div class="field">
+                  <label for="pPrice">Price (USD) *</label>
+                  <input id="pPrice" type="number" min="0" max="99999" step="0.01" required placeholder="18.99">
+                </div>
+                <div class="field">
+                  <label for="pCategory">Category *</label>
+                  <input id="pCategory" type="text" list="categoryList" required maxlength="60" placeholder="Lipstick">
+                  <datalist id="categoryList"></datalist>
+                </div>
+                <div class="field field-full">
+                  <label for="pDescription">Description</label>
+                  <textarea id="pDescription" maxlength="2000" placeholder="A short, attractive description. Cosmetic-safe wording only — no medical claims."></textarea>
+                </div>
+                <div class="field field-full">
+                  <label for="pBuyLink">Buy link (optional)</label>
+                  <input id="pBuyLink" type="url" placeholder="https://www.amazon.com/dp/…  (leave empty for “Contact to order”)">
+                </div>
+                <div class="field field-full">
+                  <label>Images</label>
+                  <div id="imagePreviews" class="image-previews"></div>
+                  <div class="upload-row">
+                    <label class="btn btn-secondary" for="imageUpload">Upload Images</label>
+                    <input id="imageUpload" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+                    <span class="field-hint">JPG, PNG or WebP, up to 5 MB each. First image is the main one.</span>
+                  </div>
+                  <div class="field" style="margin-top:12px">
+                    <label for="imageUrlInput">Or paste an image URL</label>
+                    <div class="url-add-row">
+                      <input id="imageUrlInput" type="url" placeholder="https://…/image.jpg">
+                      <button id="addImageUrlBtn" class="btn btn-ghost" type="button">Add</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="field checkbox-field">
+                  <label class="checkbox-label">
+                    <input id="pVisible" type="checkbox" checked>
+                    Visible on the store
+                  </label>
+                </div>
+              </div>
+              <p id="productError" class="form-error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit" id="productSaveBtn">Save Product</button>
+                <button class="btn btn-ghost" type="button" id="productCancelBtn">Cancel</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Social links -->
+          <section id="tab-social" class="admin-panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h2>Social Links</h2>
+                <p class="panel-sub">Paste your profile/page URLs. Empty fields show a dimmed icon on the store. Changes appear instantly.</p>
+              </div>
+            </div>
+            <form id="socialForm" novalidate>
+              <div class="field">
+                <label for="sFacebook">Facebook</label>
+                <input id="sFacebook" type="url" placeholder="https://www.facebook.com/yourpage">
+              </div>
+              <div class="field">
+                <label for="sTikTok">TikTok</label>
+                <input id="sTikTok" type="url" placeholder="https://www.tiktok.com/@yourname">
+              </div>
+              <div class="field">
+                <label for="sInstagram">Instagram</label>
+                <input id="sInstagram" type="url" placeholder="https://www.instagram.com/yourname">
+              </div>
+              <div class="field">
+                <label for="sYoutube">YouTube Shorts</label>
+                <input id="sYoutube" type="url" placeholder="https://www.youtube.com/@yourname">
+              </div>
+              <p id="socialError" class="form-error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit" id="socialSaveBtn">Save Social Links</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Store settings -->
+          <section id="tab-settings" class="admin-panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h2>Store Settings</h2>
+                <p class="panel-sub">Everything visitors see — edit it here and it updates on the store right away.</p>
+              </div>
+            </div>
+            <form id="settingsForm" novalidate>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="setStoreName">Store name</label>
+                  <input id="setStoreName" type="text" maxlength="80">
+                </div>
+                <div class="field">
+                  <label for="setCurrency">Currency symbol</label>
+                  <input id="setCurrency" type="text" maxlength="4" placeholder="$">
+                </div>
+                <div class="field field-full">
+                  <label for="setTagline">Tagline</label>
+                  <input id="setTagline" type="text" maxlength="200">
+                </div>
+                <div class="field field-full">
+                  <label for="setHeroHeadline">Hero headline</label>
+                  <input id="setHeroHeadline" type="text" maxlength="160">
+                </div>
+                <div class="field field-full">
+                  <label for="setHeroSub">Hero subheadline</label>
+                  <textarea id="setHeroSub" maxlength="400"></textarea>
+                </div>
+                <div class="field">
+                  <label for="setAnnouncement">Announcement bar text</label>
+                  <input id="setAnnouncement" type="text" maxlength="160" placeholder="Free shipping on orders over $35">
+                </div>
+                <div class="field checkbox-field">
+                  <label class="checkbox-label">
+                    <input id="setAnnouncementEnabled" type="checkbox">
+                    Show announcement bar
+                  </label>
+                </div>
+                <div class="field field-full">
+                  <label for="setAbout">About text</label>
+                  <textarea id="setAbout" maxlength="2000"></textarea>
+                </div>
+                <div class="field">
+                  <label for="setContactEmail">Contact email</label>
+                  <input id="setContactEmail" type="email" maxlength="120">
+                </div>
+                <div class="field">
+                  <label>Trust badges (Why choose us)</label>
+                  <input id="setBadge1" type="text" maxlength="60" placeholder="Cruelty-free finds">
+                  <input id="setBadge2" type="text" maxlength="60" placeholder="Secure checkout" style="margin-top:8px">
+                  <input id="setBadge3" type="text" maxlength="60" placeholder="Easy returns" style="margin-top:8px">
+                </div>
+                <div class="field field-full">
+                  <label for="setDisclosure">Affiliate disclosure (footer)</label>
+                  <textarea id="setDisclosure" maxlength="400"></textarea>
+                </div>
+                <div class="field checkbox-field">
+                  <label class="checkbox-label">
+                    <input id="setDisclosureEnabled" type="checkbox">
+                    Show affiliate disclosure
+                  </label>
+                </div>
+              </div>
+              <p id="settingsError" class="form-error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit" id="settingsSaveBtn">Save Settings</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Legal pages -->
+          <section id="tab-legal" class="admin-panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h2>Legal Pages</h2>
+                <p class="panel-sub">Edit the text of the Privacy Policy, Terms of Use and Shipping &amp; Returns pages. The first line of each becomes the page heading.</p>
+              </div>
+            </div>
+            <form id="legalForm" novalidate>
+              <div class="field">
+                <label for="legalPrivacy">Privacy Policy</label>
+                <textarea id="legalPrivacy" maxlength="10000" rows="8"></textarea>
+              </div>
+              <div class="field">
+                <label for="legalTerms">Terms of Use</label>
+                <textarea id="legalTerms" maxlength="10000" rows="8"></textarea>
+              </div>
+              <div class="field">
+                <label for="legalShipping">Shipping &amp; Returns</label>
+                <textarea id="legalShipping" maxlength="10000" rows="8"></textarea>
+              </div>
+              <p id="legalError" class="form-error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit" id="legalSaveBtn">Save Legal Pages</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Account -->
+          <section id="tab-account" class="admin-panel" hidden>
+            <div class="panel-head">
+              <div>
+                <h2>Account</h2>
+                <p class="panel-sub">Signed in as <strong id="accountUsername"></strong>.</p>
+              </div>
+            </div>
+            <form id="usernameForm" novalidate>
+              <div class="field">
+                <label for="accountNewUsername">Change username</label>
+                <input id="accountNewUsername" type="text" maxlength="60">
+              </div>
+              <p id="usernameError" class="form-error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button class="btn btn-secondary" type="submit" id="usernameSaveBtn">Change Username</button>
+              </div>
+            </form>
+            <hr class="divider">
+            <form id="passwordForm" novalidate>
+              <div class="field">
+                <label for="currentPassword">Current password</label>
+                <input id="currentPassword" type="password" autocomplete="current-password" required>
+              </div>
+              <div class="field">
+                <label for="accountNewPassword">New password</label>
+                <input id="accountNewPassword" type="password" autocomplete="new-password" required>
+                <div class="strength" aria-hidden="true">
+                  <div id="accountStrengthBar" class="strength-bar"></div>
+                </div>
+                <p id="accountStrengthLabel" class="field-hint">At least 10 characters, with upper + lowercase, a number and a special character.</p>
+              </div>
+              <div class="field">
+                <label for="accountConfirmPassword">Confirm new password</label>
+                <input id="accountConfirmPassword" type="password" autocomplete="new-password" required>
+              </div>
+              <p id="passwordError" class="form-error" role="alert" hidden></p>
+              <div class="form-actions">
+                <button class="btn btn-secondary" type="submit" id="passwordSaveBtn">Change Password</button>
+              </div>
+            </form>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation -->
+  <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" hidden>
+    <div class="modal-backdrop" data-confirm-cancel></div>
+    <div class="modal-card confirm-card">
+      <h3 id="confirmTitle">Delete this product?</h3>
+      <p id="confirmText">This cannot be undone.</p>
+      <div class="form-actions">
+        <button id="confirmDeleteBtn" class="btn btn-danger" type="button">Delete</button>
+        <button class="btn btn-ghost" type="button" data-confirm-cancel>Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toasts -->
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <script src="/js/admin.js" defer></script>
+</body>
+</html>

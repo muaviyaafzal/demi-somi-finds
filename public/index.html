@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demi Somi Finds — Beauty Finds You'll Love</title>
+  <meta name="description" content="Demi Somi Finds — a curated beauty and makeup showcase: lipsticks, skincare, mascara, blush and more. Handpicked finds for every skin tone, shared with love.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Demi Somi Finds — Beauty Finds You'll Love">
+  <meta property="og:description" content="Curated lipsticks, skincare, mascara, blush and more. Handpicked beauty finds for every skin tone.">
+  <meta property="og:image" content="/favicon.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Demi Somi Finds — Beauty Finds You'll Love">
+  <meta name="twitter:description" content="Curated lipsticks, skincare, mascara, blush and more. Handpicked beauty finds for every skin tone.">
+  <meta name="twitter:image" content="/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Page-load intro (skippable, under 2s) -->
+  <div id="intro" class="intro" role="status" aria-label="Loading Demi Somi Finds">
+    <div class="intro-inner">
+      <div class="intro-mark" aria-hidden="true">D<span>S</span></div>
+      <p class="intro-name">Demi Somi Finds</p>
+      <p class="intro-tag">Beauty finds you'll love</p>
+    </div>
+  </div>
+
+  <!-- Scroll progress -->
+  <div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Custom cursor (desktop only, hidden on touch) -->
+  <div id="cursorDot" class="cursor-dot" aria-hidden="true"></div>
+  <div id="cursorRing" class="cursor-ring" aria-hidden="true"><span id="cursorLabel"></span></div>
+
+  <!-- Announcement bar (editable in admin, can be turned off) -->
+  <div id="announcementBar" class="announcement-bar" hidden>
+    <p id="announcementText"></p>
+  </div>
+
+  <!-- Sticky header -->
+  <header id="siteHeader" class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#top" data-cursor>
+        <span class="brand-mark" aria-hidden="true">DS</span>
+        <span id="brandName">Demi Somi Finds</span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#top">Home</a>
+        <a href="#products">Products</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle dark mode" data-cursor>
+          <span class="theme-icon" aria-hidden="true">◐</span>
+        </button>
+        <button id="menuToggle" class="icon-btn menu-btn" type="button" aria-label="Open menu" aria-expanded="false" data-cursor>
+          <span aria-hidden="true">☰</span>
+        </button>
+      </div>
+    </div>
+    <nav id="mobileNav" class="mobile-nav" aria-label="Mobile navigation" hidden>
+      <a href="#top">Home</a>
+      <a href="#products">Products</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-decor" aria-hidden="true">
+        <svg class="float-el float-1" data-depth="18" viewBox="0 0 120 200"><path d="M45 60 L60 20 Q75 8 90 20 L90 60 Z" fill="#C96F5A"/><rect x="38" y="60" width="64" height="22" rx="6" fill="#D9B36A"/><rect x="32" y="82" width="76" height="96" rx="18" fill="#8E7CC3"/></svg>
+        <svg class="float-el float-2" data-depth="30" viewBox="0 0 160 160"><circle cx="80" cy="80" r="62" fill="#EFE6DC"/><circle cx="80" cy="80" r="46" fill="#E8B4A0"/><circle cx="80" cy="80" r="46" fill="none" stroke="#D9C6B2" stroke-width="4"/></svg>
+        <svg class="float-el float-3" data-depth="12" viewBox="0 0 120 200"><rect x="48" y="40" width="24" height="70" rx="10" fill="#5B4B8A"/><rect x="40" y="110" width="40" height="70" rx="18" fill="#3E3456"/></svg>
+        <span class="float-el petal petal-1" data-depth="40"></span>
+        <span class="float-el petal petal-2" data-depth="24"></span>
+        <span class="float-el petal petal-3" data-depth="34"></span>
+        <span class="float-el blob blob-1" data-depth="10"></span>
+        <span class="float-el blob blob-2" data-depth="16"></span>
+      </div>
+      <div class="container hero-inner">
+        <p class="hero-eyebrow reveal">Curated beauty · For every skin tone</p>
+        <h1 id="heroHeadline" class="reveal">Beauty finds that feel made for you.</h1>
+        <p id="heroSubheadline" class="hero-sub reveal">Soft, everyday luxury — lipsticks, skincare and little rituals that brighten your day. Handpicked, honestly reviewed, and made to be shared.</p>
+        <div class="hero-ctas reveal">
+          <a href="#products" class="btn btn-primary magnetic" data-cursor>Shop Now</a>
+          <a href="#about" class="btn btn-secondary magnetic" data-cursor>Our Story</a>
+        </div>
+        <p id="heroTagline" class="hero-tagline reveal"></p>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section id="products" class="section products-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Our favorite finds</h2>
+          <p>Tap any product to see the details. When a Buy button is ready, it takes you straight to the shop.</p>
+        </div>
+        <div class="products-toolbar reveal">
+          <label class="search-box">
+            <span class="sr-only">Search products</span>
+            <input id="searchInput" type="search" placeholder="Search lipsticks, serums, blush…" autocomplete="off">
+          </label>
+          <div id="categoryChips" class="chips" role="group" aria-label="Filter by category"></div>
+        </div>
+        <div id="productsGrid" class="products-grid" aria-live="polite"></div>
+        <p id="noResults" class="no-results" hidden>No products match your search. Try a different word.</p>
+      </div>
+    </section>
+
+    <!-- Why choose us -->
+    <section class="section why-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Why you'll love shopping here</h2>
+          <p>Small touches that make a big difference.</p>
+        </div>
+        <div id="whyGrid" class="why-grid"></div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section about-section">
+      <div class="container about-inner reveal">
+        <div class="about-text">
+          <h2>Our story</h2>
+          <p id="aboutText"></p>
+        </div>
+        <div class="about-card" aria-hidden="true">
+          <div class="about-card-mark">DS</div>
+          <p>Beauty, minus the overwhelm.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section contact-section">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Get in touch</h2>
+          <p>Questions about a product, or a find you'd love us to feature? We'd love to hear from you.</p>
+        </div>
+        <div class="contact-card reveal">
+          <p class="contact-label">Email us</p>
+          <a id="contactEmail" class="contact-email" href="#" data-cursor></a>
+          <div class="contact-social" id="contactSocial"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <p class="footer-name" id="footerName">Demi Somi Finds</p>
+        <p id="footerTagline" class="footer-tagline"></p>
+        <div class="social-icons" id="footerSocial"></div>
+      </div>
+      <nav class="footer-links" aria-label="Quick links">
+        <p class="footer-heading">Explore</p>
+        <a href="#top">Home</a>
+        <a href="#products">Products</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <nav class="footer-links" aria-label="Legal links">
+        <p class="footer-heading">Good to know</p>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Use</a>
+        <a href="/shipping">Shipping &amp; Returns</a>
+      </nav>
+    </div>
+    <div class="container footer-bottom">
+      <p id="disclosureLine" class="disclosure" hidden></p>
+      <p class="copyright">© <span id="year"></span> <span id="copyrightName">Demi Somi Finds</span>. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Product detail modal -->
+  <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card">
+      <button class="modal-close icon-btn" type="button" data-close-modal aria-label="Close product details" data-cursor>✕</button>
+      <div class="modal-media">
+        <img id="modalImage" src="" alt="">
+      </div>
+      <div class="modal-body">
+        <p id="modalCategory" class="modal-category"></p>
+        <h3 id="modalName"></h3>
+        <p id="modalTitle" class="modal-title"></p>
+        <p id="modalPrice" class="modal-price"></p>
+        <p id="modalDescription"></p>
+        <div class="modal-actions">
+          <a id="modalBuyBtn" class="btn btn-primary magnetic" href="#" target="_blank" rel="noopener noreferrer" data-cursor>Buy Now</a>
+          <a id="modalContactBtn" class="btn btn-secondary magnetic" href="#contact" data-cursor>Contact to Order</a>
+        </div>
+        <p class="modal-note">You'll be taken to the retailer's website to complete your purchase.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cookie / privacy notice -->
+  <div id="cookieBanner" class="cookie-banner" role="region" aria-label="Privacy notice" hidden>
+    <p>We use cookies to remember your preferences (like dark mode) and to understand how visitors use the store. See our <a href="/privacy">Privacy Policy</a>.</p>
+    <button id="cookieAccept" class="btn btn-primary" type="button" data-cursor>Got it</button>
+  </div>
+
+  <script src="/js/store.js" defer></script>
+</body>
+</html>

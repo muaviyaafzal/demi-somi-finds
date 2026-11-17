@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^12.0.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.5.0"
+  },
+  "description": "Demi Somi Finds — a women's beauty and makeup product showcase store. Express + SQLite, one service, no build step.",
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "main": "server.js",
+  "name": "demi-somi-finds",
+  "optionalDependencies": {
+    "sharp": "^0.34.0"
+  },
+  "scripts": {
+    "dev": "node server.js",
+    "seed": "node seed.js",
+    "start": "node server.js"
+  },
+  "version": "1.0.0"
+}
