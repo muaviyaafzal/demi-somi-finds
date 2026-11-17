@@ -216,6 +216,7 @@ app.get('/api/settings', apiLimiter, (req, res) => {
   const s = getAllSettings();
   res.json({
     store_name: s.store_name || 'Demi Somi Finds',
+    theme: THEMES.includes(s.theme) ? s.theme : 'lavender',
     tagline: s.tagline || '',
     hero_headline: s.hero_headline || '',
     hero_subheadline: s.hero_subheadline || '',
@@ -602,8 +603,11 @@ app.delete('/api/admin/uploads', requireAuth, requireFullAdmin, (req, res) => {
 /* ------------------------------------------------------------------ */
 /* Admin: settings                                                     */
 /* ------------------------------------------------------------------ */
+// Store themes (two-color combinations). 'lavender' is the default.
+const THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage'];
+
 const SETTING_KEYS = [
-  'store_name', 'tagline', 'hero_headline', 'hero_subheadline',
+  'store_name', 'theme', 'tagline', 'hero_headline', 'hero_subheadline',
   'announcement_text', 'announcement_enabled', 'about_text', 'contact_email',
   'currency', 'trust_badges', 'disclosure_text', 'disclosure_enabled',
   'social_facebook', 'social_tiktok', 'social_instagram', 'social_youtube',
@@ -632,6 +636,9 @@ app.put('/api/admin/settings', requireAuth, requireFullAdmin, (req, res) => {
   };
   str('store_name', 80);
   str('tagline', 200);
+  if (body.theme !== undefined && !THEMES.includes(body.theme)) {
+    errors.push(`theme must be one of: ${THEMES.join(', ')}.`);
+  }
   str('hero_headline', 160);
   str('hero_subheadline', 400);
   str('announcement_text', 160);

@@ -60,6 +60,29 @@
   }
 
   /* ---------------------------------------------------------------- */
+  /* Store theme (admin-selectable, two-color combinations)            */
+  /* ---------------------------------------------------------------- */
+  const STORE_THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage'];
+  function applyTheme(theme) {
+    const t = STORE_THEMES.includes(theme) ? theme : 'lavender';
+    document.documentElement.setAttribute('data-store-theme', t);
+  }
+
+  /* Category tint shown behind a product image only if that image
+     fails to load — the glow itself always comes from the image. */
+  const CATEGORY_GLOW = {
+    Lipstick: 'linear-gradient(135deg, #e8a0a0, #c96a8b)',
+    Skincare: 'linear-gradient(135deg, #a8c5a0, #7fa377)',
+    Face: 'linear-gradient(135deg, #f2c4b3, #e8a87c)',
+    Mascara: 'linear-gradient(135deg, #b8a9e0, #7d4a7a)',
+    Blush: 'linear-gradient(135deg, #f2c4b3, #e8a0a0)',
+  };
+  const DEFAULT_GLOW = 'linear-gradient(135deg, #b8a9e0, #f6e3d7)';
+  function glowFallback(category) {
+    return CATEGORY_GLOW[category] || DEFAULT_GLOW;
+  }
+
+  /* ---------------------------------------------------------------- */
   /* Social icons (inline SVG)                                         */
   /* ---------------------------------------------------------------- */
   const SOCIAL_ICONS = {
@@ -99,12 +122,11 @@
   function applySettings() {
     if (!settings) return;
     document.title = `${settings.store_name || 'Demi Somi Finds'} — Beauty Finds You'll Love`;
-    $('#brandName').textContent = settings.store_name || 'Demi Somi Finds';
+    applyTheme(settings.theme);
     $('#heroHeadline').textContent = settings.hero_headline || 'Beauty finds that feel made for you.';
     $('#heroSubheadline').textContent = settings.hero_subheadline || '';
     $('#heroTagline').textContent = settings.tagline || '';
     $('#aboutText').textContent = settings.about_text || '';
-    $('#footerName').textContent = settings.store_name || 'Demi Somi Finds';
     $('#copyrightName').textContent = settings.store_name || 'Demi Somi Finds';
     $('#footerTagline').textContent = settings.tagline || '';
 
@@ -198,6 +220,9 @@
     grid.innerHTML = list.map((p, i) => `
       <article class="product-card reveal" data-id="${p.id}" style="--reveal-delay:${Math.min(i, 8) * 70}ms" tabindex="0" data-cursor-view>
         <div class="card-media">
+          <div class="card-glow" style="--glow-fallback:${glowFallback(p.category)}" aria-hidden="true">
+            <img src="${escapeHtml(productImage(p))}" alt="" loading="lazy" decoding="async">
+          </div>
           <img src="${escapeHtml(productImage(p))}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">
         </div>
         <div class="card-body">
@@ -212,6 +237,11 @@
         </div>
       </article>`).join('');
 
+    // If a glow copy fails to load, hide it so the category tint behind
+    // it shows instead (same image as the card photo, so this is rare).
+    $$('.card-glow img', grid).forEach((img) => {
+      img.addEventListener('error', () => { img.style.display = 'none'; }, { once: true });
+    });
     $$('.product-card', grid).forEach((card) => {
       const id = Number(card.dataset.id);
       card.addEventListener('click', (e) => {
@@ -253,8 +283,13 @@
     const p = products.find((x) => x.id === id);
     if (!p) return;
     lastFocused = document.activeElement;
-    $('#modalImage').src = productImage(p);
+    const imgSrc = productImage(p);
+    $('#modalImage').src = imgSrc;
     $('#modalImage').alt = p.name;
+    const glowImg = $('#modalGlowImage');
+    glowImg.style.display = '';
+    glowImg.src = imgSrc;
+    $('.modal-glow').style.setProperty('--glow-fallback', glowFallback(p.category));
     $('#modalCategory').textContent = p.category;
     $('#modalName').textContent = p.name;
     $('#modalTitle').textContent = p.title || '';
@@ -288,6 +323,9 @@
   }
 
   $$('[data-close-modal]').forEach((el) => el.addEventListener('click', closeModal));
+  $('#modalGlowImage').addEventListener('error', () => {
+    $('#modalGlowImage').style.display = 'none';
+  });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !modal.hidden) closeModal();
   });

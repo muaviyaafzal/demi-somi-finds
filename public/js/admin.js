@@ -220,6 +220,25 @@
   let products = [];
   let settings = {};
   let formImages = [];
+  let selectedTheme = 'lavender';
+  const STORE_THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage'];
+
+  function markSelectedTheme() {
+    $$('.theme-swatch').forEach((sw) => {
+      const active = sw.dataset.theme === selectedTheme;
+      sw.classList.toggle('selected', active);
+      sw.setAttribute('aria-checked', String(active));
+    });
+  }
+
+  $$('.theme-swatch').forEach((sw) => {
+    sw.addEventListener('click', () => {
+      if (STORE_THEMES.includes(sw.dataset.theme)) {
+        selectedTheme = sw.dataset.theme;
+        markSelectedTheme();
+      }
+    });
+  });
 
   async function enterDashboard() {
     $('#adminUserLabel').textContent = localStorage.getItem(USER_KEY) || '';
@@ -507,6 +526,8 @@
       $('#setBadge3').value = badges[2] || '';
       $('#setDisclosure').value = settings.disclosure_text || '';
       $('#setDisclosureEnabled').checked = settings.disclosure_enabled === '1';
+      selectedTheme = STORE_THEMES.includes(settings.theme) ? settings.theme : 'lavender';
+      markSelectedTheme();
       $('#sFacebook').value = settings.social_facebook || '';
       $('#sTikTok').value = settings.social_tiktok || '';
       $('#sInstagram').value = settings.social_instagram || '';
@@ -536,6 +557,7 @@
       trust_badges: badges,
       disclosure_text: $('#setDisclosure').value.trim(),
       disclosure_enabled: $('#setDisclosureEnabled').checked ? '1' : '0',
+      theme: selectedTheme,
     };
     const btn = $('#settingsSaveBtn');
     setLoading(btn, true, 'Saving…');

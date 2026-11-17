@@ -30,6 +30,7 @@ const DEMO_ADMIN_PASSWORD_HASH =
 /* ------------------------------------------------------------------ */
 const DEFAULT_SETTINGS = {
   store_name: 'Demi Somi Finds',
+  theme: 'lavender',
   tagline: 'Beauty finds you will love — curated for every skin tone.',
   hero_headline: 'Beauty finds that feel made for you.',
   hero_subheadline:

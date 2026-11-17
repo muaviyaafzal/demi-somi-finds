@@ -283,6 +283,39 @@
 .confirm-card h3 { margin-bottom: 8px; }
 .confirm-card p { color: var(--color-text-soft); }
 
+/* ---------- Store theme picker (Store Settings) ---------- */
+.theme-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+.theme-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-card);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body);
+  transition: transform var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+.theme-swatch:hover { border-color: var(--color-primary); transform: translateY(-2px); }
+.theme-swatch.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-pale);
+}
+.theme-swatch-gradient {
+  display: block;
+  height: 44px;
+  border-radius: var(--radius-sm);
+}
+.theme-swatch-name { font-size: 0.9rem; font-weight: 600; color: var(--color-text); }
+
 /* ---------- Toasts ---------- */
 .toasts {
   position: fixed;
