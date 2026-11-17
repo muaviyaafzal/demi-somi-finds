@@ -12,7 +12,7 @@ demi-somi-finds/
 ├── db.js                # SQLite setup, schema, settings/product helpers
 ├── seed.js              # First-run seed: 5 demo products + default settings + demo admin
 ├── package.json
-├── render.yaml          # Render blueprint for one-click deploy (+ persistent disk)
+├── render.yaml          # Render blueprint for one-click deploy
 ├── .env.example         # Copy to .env and fill in (never commit a real .env)
 ├── public/
 │   ├── index.html       # Public storefront (data comes from the API)
@@ -62,7 +62,7 @@ If you ever lock yourself out (5 wrong attempts locks the account for 15 minutes
 
 ## Deploy to a public link (Render — free tier)
 
-Render is the recommended host because the included `render.yaml` blueprint creates the service **and** a persistent disk in one step. The disk matters: without it, Render's free service wipes the SQLite database and uploaded images on every restart/deploy.
+Render is the recommended host because the included `render.yaml` blueprint creates the free web service in one step. One honest limit: Render's free tier does NOT allow persistent disks, so the SQLite database and uploaded images are wiped on every restart/redeploy. The build re-runs the seed script, so the 5 demo products always come back — but products you add in the admin panel will be lost on a restart. For permanent storage, upgrade to the Starter plan (~$7/month) and add a disk.
 
 1. **Put the code on GitHub.** Create a free GitHub account if needed, make a new repository, and upload this whole folder (except `node_modules/` and `data/store.db` — both are gitignored already).
 2. **In Render** (render.com, free account): click **New + → Blueprint**, connect your GitHub account, and select the repository. Render reads `render.yaml` and creates the web service.
@@ -74,7 +74,7 @@ Render is the recommended host because the included `render.yaml` blueprint crea
 **Honest notes about the free tier:**
 
 - The free web service **sleeps after ~15 minutes of inactivity** — the first visit after a nap can take up to a minute to wake up. That is normal on the free plan; a paid plan ($7/month) keeps it always awake.
-- The **persistent disk (1 GB)** is what keeps your products, settings and uploaded images safe across restarts and redeploys. Without it, everything would reset. The disk is included in the blueprint; do not remove it.
+- **No persistent disk on the free plan:** products, settings and uploaded images reset on every restart/redeploy. The 5 demo products always come back (the build re-seeds them), but your own additions do not. Upgrade to the Starter plan (~$7/month) and add a disk if you want everything to stay permanently.
 - The free tier has limited monthly hours, which is plenty for a small store.
 
 **Other hosts that also work** (no blueprint included, same idea): Railway, Fly.io, or any VPS with Node.js 20+. On any host, set the `JWT_SECRET` environment variable to a long random string, and make sure `data/` is stored on a persistent volume — otherwise the database resets on restart.
