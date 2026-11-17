@@ -48,7 +48,13 @@
   --radius-lg: 24px;
   --radius-pill: 999px;
 
-  /* Shadow scale */
+  /* Button gradient end-stops (kept separate from the "deep" text
+     colors so a dark theme can have light text AND dark buttons). */
+  --color-btn-primary-end: #33142f;
+  --color-btn-accent-end: #a8823a;
+  /* Text color that sits on the primary / accent gradients. */
+  --color-on-primary: #fff;
+  --color-on-accent: #fff;
   --shadow-sm: 0 2px 8px rgba(58, 54, 51, 0.07);
   --shadow-md: 0 8px 24px rgba(58, 54, 51, 0.1);
   --shadow-lg: 0 18px 48px rgba(58, 54, 51, 0.16);
@@ -72,22 +78,57 @@
 /* readable in dark mode.                                              */
 /* ------------------------------------------------------------------ */
 [data-store-theme="lavender"] {
-  --color-primary: #4a2145;
-  --color-primary-deep: #33142f;
-  --color-primary-soft: #b8a9e0;
-  --color-primary-pale: #efe8f6;
+  /* DEFAULT THEME — the owner's own image: deep dark purple with soft
+     lavender + peach/gold bokeh. Dark background, cream text, lavender
+     and gold accents. The "deep" variables are LIGHT here on purpose:
+     they are the text colors on the dark background, while the buttons
+     use the separate --color-btn-*-end stops (dark plum / deep gold)
+     so white button text stays readable. */
+  --color-primary: #8b4fc0;
+  --color-primary-deep: #e9d8f8;
+  --color-primary-soft: #b678e8;
+  --color-primary-pale: #3a2350;
   --color-sage: #a78bda;
-  --color-sage-deep: #8668bd;
-  --color-sage-pale: #e9e2f8;
-  --color-accent: #c9a24b;
-  --color-accent-deep: #a8823a;
-  --color-accent-pale: #f6ecd4;
-  --color-blush: #d9b8d8;
-  --color-blush-pale: #f7edf5;
-  --color-bg: #faf5ee;
-  --color-surface: #f3e9dc;
-  --color-card: #fffdf8;
-  --shadow-glow: 0 20px 55px rgba(74, 33, 69, 0.35);
+  --color-sage-deep: #d8c8f0;
+  --color-sage-pale: #2e2140;
+  --color-accent: #d9a441;
+  --color-accent-deep: #e8c97a;
+  --color-accent-pale: #3d2f16;
+  --color-blush: #d9a0c8;
+  --color-blush-pale: #33203a;
+  --color-bg: #241031;
+  --color-surface: #2e1440;
+  --color-card: #35194d;
+  --color-text: #f6f0ea;
+  --color-text-soft: #d9cfe2;
+  --color-text-faint: #ab9bbd;
+  --color-border: #4a2b5e;
+  --color-header-bg: rgba(36, 16, 49, 0.85);
+  --color-btn-primary-end: #3a1c40;
+  --color-btn-accent-end: #6e4f16;
+  --color-on-primary: #fff;
+  --color-on-accent: #241031;
+  --shadow-glow: 0 20px 55px rgba(139, 79, 192, 0.45);
+}
+/* Dark default theme: the hero carries the bokeh from his image —
+   soft lavender glow top-left, warm peach glow bottom-right. */
+[data-store-theme="lavender"] .hero {
+  background:
+    radial-gradient(560px 380px at 10% -5%, rgba(182, 120, 232, 0.38) 0%, transparent 60%),
+    radial-gradient(520px 360px at 95% 105%, rgba(232, 180, 140, 0.28) 0%, transparent 60%),
+    radial-gradient(640px 420px at 85% -10%, var(--color-primary-pale) 0%, transparent 60%),
+    radial-gradient(560px 380px at -10% 90%, var(--color-sage-pale) 0%, transparent 60%),
+    linear-gradient(160deg, var(--color-bg), var(--color-blush-pale) 55%, var(--color-primary-pale));
+}
+/* Dark default theme: the eyebrow pill and the About card keep light
+   text on the dark background (the generic rules assume a light page). */
+[data-store-theme="lavender"] .hero-eyebrow {
+  background: rgba(182, 120, 232, 0.18);
+  color: #e9d8f8;
+  border: 1px solid rgba(182, 120, 232, 0.4);
+}
+[data-store-theme="lavender"] .about-card {
+  background: linear-gradient(135deg, #3a1c40, #6b3a9e);
 }
 
 /* Sunset Orange + Teal (portfolio-inspired) */
@@ -107,6 +148,8 @@
   --color-bg: #fdf8f2;
   --color-surface: #f7ede1;
   --color-card: #fffdf9;
+  --color-btn-primary-end: #b04f24;
+  --color-btn-accent-end: #c07f1f;
   --shadow-glow: 0 20px 55px rgba(217, 111, 58, 0.35);
 }
 
@@ -127,6 +170,8 @@
   --color-bg: #fdf7f5;
   --color-surface: #f9ebe7;
   --color-card: #fffbf9;
+  --color-btn-primary-end: #a94f70;
+  --color-btn-accent-end: #bd6a55;
   --shadow-glow: 0 20px 55px rgba(201, 106, 139, 0.35);
 }
 
@@ -147,6 +192,8 @@
   --color-bg: #faf5f9;
   --color-surface: #f2e8f1;
   --color-card: #fffafc;
+  --color-btn-primary-end: #63355f;
+  --color-btn-accent-end: #a85a7c;
   --shadow-glow: 0 20px 55px rgba(125, 74, 122, 0.35);
 }
 
@@ -167,6 +214,8 @@
   --color-bg: #f7f8f2;
   --color-surface: #eef1e6;
   --color-card: #fdfdf8;
+  --color-btn-primary-end: #527549;
+  --color-btn-accent-end: #b96f45;
   --shadow-glow: 0 20px 55px rgba(111, 154, 104, 0.35);
 }
 
@@ -284,8 +333,8 @@ img { max-width: 100%; display: block; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-deep));
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-btn-primary-end));
+  color: var(--color-on-primary, #fff);
   box-shadow: var(--shadow-md);
 }
 .btn-primary:hover {
@@ -305,8 +354,8 @@ img { max-width: 100%; display: block; }
 }
 
 .btn-accent {
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-deep));
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-btn-accent-end));
+  color: var(--color-on-accent, #fff);
   box-shadow: var(--shadow-md);
 }
 .btn-accent:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
@@ -430,63 +479,10 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 }
 
 /* ------------------------------------------------------------------ */
-/* Custom cursor (fine pointers only)                                  */
-/* ------------------------------------------------------------------ */
-.cursor-dot, .cursor-ring { display: none; }
-@media (pointer: fine) {
-  body.has-cursor, body.has-cursor a, body.has-cursor button,
-  body.has-cursor input, body.has-cursor textarea, body.has-cursor select,
-  body.has-cursor label { cursor: none; }
-  .cursor-dot, .cursor-ring {
-    display: flex;
-    position: fixed;
-    top: 0; left: 0;
-    pointer-events: none;
-    z-index: 300;
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-  }
-  .cursor-dot {
-    width: 8px; height: 8px;
-    background: var(--color-accent);
-    transform: translate(-50%, -50%);
-  }
-  .cursor-ring {
-    width: 38px; height: 38px;
-    border: 1.5px solid var(--color-primary);
-    transform: translate(-50%, -50%);
-    transition: width var(--duration-fast) var(--ease-out),
-      height var(--duration-fast) var(--ease-out),
-      background-color var(--duration-fast) var(--ease-out),
-      border-color var(--duration-fast) var(--ease-out);
-  }
-  .cursor-ring.is-hover {
-    width: 56px; height: 56px;
-    background: rgba(142, 124, 195, 0.12);
-  }
-  .cursor-ring.is-view {
-    width: 72px; height: 72px;
-    background: rgba(208, 140, 96, 0.9);
-    border-color: transparent;
-  }
-  .cursor-ring span {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #fff;
-    opacity: 0;
-    transition: opacity var(--duration-fast);
-  }
-  .cursor-ring.is-view span { opacity: 1; }
-}
-
-/* ------------------------------------------------------------------ */
 /* Announcement bar + header                                           */
 /* ------------------------------------------------------------------ */
 .announcement-bar {
-  background: linear-gradient(90deg, var(--color-primary-deep), var(--color-primary), var(--color-accent));
+  background: linear-gradient(90deg, var(--color-btn-primary-end), var(--color-primary), var(--color-accent));
   color: #fff;
   text-align: center;
   padding: 8px 16px;
@@ -538,8 +534,8 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 .brand-logo-badge {
   display: inline-flex;
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   overflow: hidden;
   background-color: #241a33;
@@ -631,7 +627,7 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
   letter-spacing: 0.04em;
   margin-bottom: var(--space-3);
 }
-[data-theme="dark"] .hero-eyebrow { background: rgba(0, 0, 0, 0.25); }
+[data-theme="dark"] .hero-eyebrow { background: rgba(255, 255, 255, 0.12); color: #f0e9e2; }
 .hero-sub {
   font-size: 1.12rem;
   color: var(--color-text-soft);
@@ -643,9 +639,12 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 
 .hero-decor { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .float-el { position: absolute; will-change: transform; }
-.float-1 { width: 92px; top: 14%; left: 6%; opacity: 0.85; animation: floaty 7s ease-in-out infinite; }
-.float-2 { width: 130px; top: 58%; right: 5%; opacity: 0.8; animation: floaty 9s ease-in-out infinite reverse; }
-.float-3 { width: 76px; top: 62%; left: 12%; opacity: 0.7; animation: floaty 8s ease-in-out infinite 1s; }
+/* Floating beauty products — tilted like a professional beauty shoot,
+   with a soft drop shadow so they lift off the background. The tilt
+   comes from --tilt so the float animation (below) keeps it. */
+.float-1 { width: 150px; top: 12%; left: 5%; opacity: 0.95; --tilt: -12deg; filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.35)); animation: floaty 7s ease-in-out infinite; }
+.float-2 { width: 180px; top: 56%; right: 4%; opacity: 0.95; --tilt: 10deg; filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.35)); animation: floaty 9s ease-in-out infinite reverse; }
+.float-3 { width: 120px; top: 60%; left: 11%; opacity: 0.95; --tilt: -8deg; filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.35)); animation: floaty 8s ease-in-out infinite 1s; }
 .petal {
   width: 26px; height: 14px;
   border-radius: 50%;
@@ -659,8 +658,8 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 .blob-1 { width: 220px; height: 220px; top: -60px; right: -40px; background: var(--color-primary-soft); opacity: 0.25; }
 .blob-2 { width: 180px; height: 180px; bottom: -50px; left: -30px; background: var(--color-sage); opacity: 0.22; }
 @keyframes floaty {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-14px) rotate(2deg); }
+  0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translateY(-14px) rotate(calc(var(--tilt, 0deg) + 2deg)); }
 }
 
 /* ------------------------------------------------------------------ */
@@ -693,7 +692,7 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 .chip.active {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary, #fff);
   box-shadow: var(--shadow-sm);
 }
 
@@ -760,11 +759,11 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
   gap: 8px;
   flex: 1;
 }
-.product-card h3 { font-size: 1.18rem; margin: 0; }
-.product-card .card-title { color: var(--color-text-faint); font-size: 0.88rem; margin: -4px 0 0; }
+.product-card h3 { font-size: 1.22rem; font-weight: 700; color: var(--color-text); margin: 0; }
+.product-card .card-title { color: var(--color-text-soft); font-size: 0.92rem; margin: -4px 0 0; }
 .product-card .card-desc {
   color: var(--color-text-soft);
-  font-size: 0.93rem;
+  font-size: 0.95rem;
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -779,11 +778,18 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
   gap: 12px;
   padding-top: 8px;
 }
+/* Price — a tinted pill in the theme's strongest text color, so the
+   price is obvious at first glance in EVERY theme (dark default,
+   light presets and custom themes alike). */
 .product-card .price {
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--color-primary-deep);
+  background: var(--color-primary-pale);
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
 }
 .product-card .btn { padding: 10px 20px; font-size: 0.9rem; }
 
@@ -956,23 +962,21 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 .copyright { color: var(--color-text-faint); font-size: 0.88rem; margin: 0; }
 
 .social-icons { display: flex; gap: 10px; margin-top: var(--space-2); }
+/* Social icons show the REAL brand marks in the REAL brand colors
+   (the SVGs carry their own fills), so hover must never recolor them —
+   it only lifts the button. */
 .social-icon {
   width: 42px; height: 42px;
   display: inline-flex; align-items: center; justify-content: center;
   border-radius: 50%;
   background: var(--color-card);
   border: 1.5px solid var(--color-border);
-  color: var(--color-primary-deep);
   transition: transform var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
 }
-.social-icon svg { width: 20px; height: 20px; fill: currentColor; }
+.social-icon svg { width: 20px; height: 20px; }
 .social-icon:hover {
   transform: translateY(-4px) scale(1.06);
-  background: var(--color-primary);
-  color: #fff;
-  border-color: var(--color-primary);
   box-shadow: var(--shadow-md);
   text-decoration: none;
 }
@@ -1062,10 +1066,14 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
 .modal-body h3 { font-size: 1.6rem; margin: 0 0 4px; }
 .modal-title { color: var(--color-text-faint); margin: 0 0 8px; }
 .modal-price {
+  display: inline-block;
   font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--color-primary-deep);
+  background: var(--color-primary-pale);
+  padding: 6px 18px;
+  border-radius: var(--radius-pill);
   margin: 0 0 var(--space-2);
 }
 .modal-body p:last-of-type { color: var(--color-text-soft); }
@@ -1125,8 +1133,8 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
   .mobile-nav[hidden] { display: none; }
   .nav-actions { margin-left: auto; }
   .hero { padding: var(--space-6) 0; }
-  .float-1 { width: 64px; }
-  .float-2 { width: 92px; }
+  .float-1 { width: 84px; }
+  .float-2 { width: 110px; }
   .float-3 { display: none; }
   .cookie-banner { flex-direction: column; align-items: stretch; text-align: center; }
 }
@@ -1143,5 +1151,4 @@ label { font-weight: 600; font-size: 0.92rem; display: block; margin-bottom: 6px
   }
   .reveal { opacity: 1; transform: none; }
   .intro { display: none; }
-  .cursor-dot, .cursor-ring { display: none !important; }
 }

@@ -221,7 +221,36 @@
   let settings = {};
   let formImages = [];
   let selectedTheme = 'lavender';
-  const STORE_THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage'];
+  const STORE_THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage', 'custom'];
+
+  // The owner's own two-color theme (built from the color pickers below).
+  const DEFAULT_CUSTOM_THEME = { primary: '#8b4fc0', secondary: '#d9a441', name: 'My Theme' };
+  let customTheme = { ...DEFAULT_CUSTOM_THEME };
+
+  function customThemeGradient() {
+    return `linear-gradient(135deg, ${customTheme.primary} 0 50%, ${customTheme.secondary} 50% 100%)`;
+  }
+  function refreshCustomThemeUI() {
+    const grad = $('#customSwatchGradient');
+    if (grad) grad.style.background = customThemeGradient();
+    const nameEl = $('#customSwatchName');
+    if (nameEl) nameEl.textContent = customTheme.name || 'My Theme';
+    const preview = $('#customThemePreview');
+    if (preview) preview.style.background = customThemeGradient();
+    const primary = $('#customPrimary');
+    if (primary) primary.value = customTheme.primary;
+    const secondary = $('#customSecondary');
+    if (secondary) secondary.value = customTheme.secondary;
+    const name = $('#customName');
+    if (name) name.value = customTheme.name || 'My Theme';
+  }
+  function readCustomThemeInputs() {
+    const primary = ($('#customPrimary').value || '').trim().toLowerCase();
+    const secondary = ($('#customSecondary').value || '').trim().toLowerCase();
+    const name = ($('#customName').value || '').trim().slice(0, 40) || 'My Theme';
+    if (!/^#[0-9a-f]{6}$/.test(primary) || !/^#[0-9a-f]{6}$/.test(secondary)) return null;
+    return { primary, secondary, name };
+  }
 
   function markSelectedTheme() {
     $$('.theme-swatch').forEach((sw) => {
@@ -231,13 +260,61 @@
     });
   }
 
+  // Picking a theme applies it to the store RIGHT AWAY (no separate
+  // Save click needed) — the old flow only saved on "Save Settings",
+  // so a tap on a swatch looked like nothing happened.
+  async function applyThemeNow(theme) {
+    const payload = { theme };
+    if (theme === 'custom') payload.custom_theme = customTheme;
+    try {
+      await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify(payload) });
+      toast('Theme applied to the store.');
+    } catch (err) {
+      toast(err.message, true);
+      await loadSettings();
+    }
+  }
+
   $$('.theme-swatch').forEach((sw) => {
     sw.addEventListener('click', () => {
-      if (STORE_THEMES.includes(sw.dataset.theme)) {
-        selectedTheme = sw.dataset.theme;
-        markSelectedTheme();
-      }
+      if (!STORE_THEMES.includes(sw.dataset.theme)) return;
+      selectedTheme = sw.dataset.theme;
+      markSelectedTheme();
+      applyThemeNow(selectedTheme);
     });
+  });
+
+  // Custom theme editor: live preview while picking, save on click.
+  ['customPrimary', 'customSecondary', 'customName'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      const next = readCustomThemeInputs();
+      if (!next) return;
+      customTheme = next;
+      refreshCustomThemeUI();
+    });
+  });
+  $('#customThemeSaveBtn').addEventListener('click', async () => {
+    const next = readCustomThemeInputs();
+    if (!next) return toast('Pick two colors first.', true);
+    customTheme = next;
+    refreshCustomThemeUI();
+    selectedTheme = 'custom';
+    markSelectedTheme();
+    const btn = $('#customThemeSaveBtn');
+    setLoading(btn, true, 'Saving…');
+    try {
+      await api('/api/admin/settings', {
+        method: 'PUT',
+        body: JSON.stringify({ theme: 'custom', custom_theme: customTheme }),
+      });
+      toast('Custom theme saved and applied to the store.');
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      setLoading(btn, false);
+    }
   });
 
   async function enterDashboard() {
@@ -528,6 +605,17 @@
       $('#setDisclosureEnabled').checked = settings.disclosure_enabled === '1';
       selectedTheme = STORE_THEMES.includes(settings.theme) ? settings.theme : 'lavender';
       markSelectedTheme();
+      const ct = settings.custom_theme;
+      if (ct && typeof ct === 'object' &&
+          /^#[0-9a-fA-F]{6}$/.test(ct.primary || '') &&
+          /^#[0-9a-fA-F]{6}$/.test(ct.secondary || '')) {
+        customTheme = {
+          primary: ct.primary.toLowerCase(),
+          secondary: ct.secondary.toLowerCase(),
+          name: (ct.name || 'My Theme').slice(0, 40),
+        };
+      }
+      refreshCustomThemeUI();
       $('#sFacebook').value = settings.social_facebook || '';
       $('#sTikTok').value = settings.social_tiktok || '';
       $('#sInstagram').value = settings.social_instagram || '';
@@ -558,6 +646,7 @@
       disclosure_text: $('#setDisclosure').value.trim(),
       disclosure_enabled: $('#setDisclosureEnabled').checked ? '1' : '0',
       theme: selectedTheme,
+      custom_theme: customTheme,
     };
     const btn = $('#settingsSaveBtn');
     setLoading(btn, true, 'Saving…');

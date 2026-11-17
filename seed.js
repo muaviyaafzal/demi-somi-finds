@@ -31,6 +31,9 @@ const DEMO_ADMIN_PASSWORD_HASH =
 const DEFAULT_SETTINGS = {
   store_name: 'Demi Somi Finds',
   theme: 'lavender',
+  // The owner's own two-color theme (admin panel → Store Settings → Custom theme).
+  // Same colors as the default dark theme until he picks his own.
+  custom_theme: JSON.stringify({ primary: '#8b4fc0', secondary: '#d9a441', name: 'My Theme' }),
   tagline: 'Beauty finds you will love — curated for every skin tone.',
   hero_headline: 'Beauty finds that feel made for you.',
   hero_subheadline:

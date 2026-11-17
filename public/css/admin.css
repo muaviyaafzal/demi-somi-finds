@@ -316,6 +316,53 @@
 }
 .theme-swatch-name { font-size: 0.9rem; font-weight: 600; color: var(--color-text); }
 
+/* ---------- Custom theme (two color pickers + name) ---------- */
+.custom-theme-box {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1.5px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.custom-theme-title { font-weight: 700; font-size: 0.95rem; margin: 0 0 10px; }
+.custom-theme-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+.color-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.color-field input[type="color"] {
+  width: 56px;
+  height: 40px;
+  padding: 2px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-card);
+  cursor: pointer;
+}
+.custom-name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex: 1 1 160px;
+}
+.custom-theme-preview {
+  height: 44px;
+  border-radius: var(--radius-sm);
+  margin: 12px 0;
+  background: linear-gradient(135deg, #8b4fc0 0 50%, #d9a441 50% 100%);
+}
+.custom-theme-box .field-hint { margin: 8px 0 0; }
+
 /* ---------- Toasts ---------- */
 .toasts {
   position: fixed;

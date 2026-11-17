@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=2">
+  <link rel="stylesheet" href="/css/style.css?v=3">
 </head>
 <body>
   <!-- Page-load intro (skippable, under 2s) -->
@@ -31,10 +31,6 @@
   <!-- Scroll progress -->
   <div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div>
 
-  <!-- Custom cursor (desktop only, hidden on touch) -->
-  <div id="cursorDot" class="cursor-dot" aria-hidden="true"></div>
-  <div id="cursorRing" class="cursor-ring" aria-hidden="true"><span id="cursorLabel"></span></div>
-
   <!-- Announcement bar (editable in admin, can be turned off) -->
   <div id="announcementBar" class="announcement-bar" hidden>
     <p id="announcementText"></p>
@@ -43,8 +39,8 @@
   <!-- Sticky header -->
   <header id="siteHeader" class="site-header">
     <div class="container nav-wrap">
-      <a class="brand" href="#top" data-cursor aria-label="Demi Somi Finds — back to top">
-        <span class="brand-logo-badge" aria-hidden="true"><img src="/images/logo-mark.jpg" alt="" width="44" height="44"></span>
+      <a class="brand" href="#top" aria-label="Demi Somi Finds — back to top">
+        <span class="brand-logo-badge" aria-hidden="true"><img src="/images/logo-mark.jpg" alt="" width="58" height="58"></span>
         <span class="sr-only">Demi Somi Finds</span>
       </a>
       <nav class="main-nav" aria-label="Main navigation">
@@ -54,10 +50,10 @@
         <a href="#contact">Contact</a>
       </nav>
       <div class="nav-actions">
-        <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle dark mode" data-cursor>
+        <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle dark mode">
           <span class="theme-icon" aria-hidden="true">◐</span>
         </button>
-        <button id="menuToggle" class="icon-btn menu-btn" type="button" aria-label="Open menu" aria-expanded="false" data-cursor>
+        <button id="menuToggle" class="icon-btn menu-btn" type="button" aria-label="Open menu" aria-expanded="false">
           <span aria-hidden="true">☰</span>
         </button>
       </div>
@@ -76,7 +72,7 @@
       <div class="hero-decor" aria-hidden="true">
         <svg class="float-el float-1" data-depth="18" viewBox="0 0 120 200"><path d="M45 60 L60 20 Q75 8 90 20 L90 60 Z" fill="#C96F5A"/><rect x="38" y="60" width="64" height="22" rx="6" fill="#D9B36A"/><rect x="32" y="82" width="76" height="96" rx="18" fill="#8E7CC3"/></svg>
         <svg class="float-el float-2" data-depth="30" viewBox="0 0 160 160"><circle cx="80" cy="80" r="62" fill="#EFE6DC"/><circle cx="80" cy="80" r="46" fill="#E8B4A0"/><circle cx="80" cy="80" r="46" fill="none" stroke="#D9C6B2" stroke-width="4"/></svg>
-        <svg class="float-el float-3" data-depth="12" viewBox="0 0 120 200"><rect x="48" y="40" width="24" height="70" rx="10" fill="#5B4B8A"/><rect x="40" y="110" width="40" height="70" rx="18" fill="#3E3456"/></svg>
+        <svg class="float-el float-3" data-depth="12" viewBox="0 0 120 200"><rect x="48" y="40" width="24" height="70" rx="10" fill="#C96A8B"/><rect x="40" y="110" width="40" height="70" rx="18" fill="#D9B36A"/></svg>
         <span class="float-el petal petal-1" data-depth="40"></span>
         <span class="float-el petal petal-2" data-depth="24"></span>
         <span class="float-el petal petal-3" data-depth="34"></span>
@@ -88,8 +84,8 @@
         <h1 id="heroHeadline" class="reveal">Beauty finds that feel made for you.</h1>
         <p id="heroSubheadline" class="hero-sub reveal">Soft, everyday luxury — lipsticks, skincare and little rituals that brighten your day. Handpicked, honestly reviewed, and made to be shared.</p>
         <div class="hero-ctas reveal">
-          <a href="#products" class="btn btn-primary magnetic" data-cursor>Shop Now</a>
-          <a href="#about" class="btn btn-secondary magnetic" data-cursor>Our Story</a>
+          <a href="#products" class="btn btn-primary">Shop Now</a>
+          <a href="#about" class="btn btn-secondary">Our Story</a>
         </div>
         <p id="heroTagline" class="hero-tagline reveal"></p>
       </div>
@@ -148,7 +144,7 @@
         </div>
         <div class="contact-card reveal">
           <p class="contact-label">Email us</p>
-          <a id="contactEmail" class="contact-email" href="#" data-cursor></a>
+          <a id="contactEmail" class="contact-email" href="#"></a>
           <div class="contact-social" id="contactSocial"></div>
         </div>
       </div>
@@ -187,7 +183,7 @@
   <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName" hidden>
     <div class="modal-backdrop" data-close-modal></div>
     <div class="modal-card">
-      <button class="modal-close icon-btn" type="button" data-close-modal aria-label="Close product details" data-cursor>✕</button>
+      <button class="modal-close icon-btn" type="button" data-close-modal aria-label="Close product details">✕</button>
       <div class="modal-media">
         <div class="modal-glow" aria-hidden="true"><img id="modalGlowImage" src="" alt=""></div>
         <img id="modalImage" src="" alt="">
@@ -199,8 +195,8 @@
         <p id="modalPrice" class="modal-price"></p>
         <p id="modalDescription"></p>
         <div class="modal-actions">
-          <a id="modalBuyBtn" class="btn btn-primary magnetic" href="#" target="_blank" rel="noopener noreferrer" data-cursor>Buy Now</a>
-          <a id="modalContactBtn" class="btn btn-secondary magnetic" href="#contact" data-cursor>Contact to Order</a>
+          <a id="modalBuyBtn" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">Buy Now</a>
+          <a id="modalContactBtn" class="btn btn-secondary" href="#contact">Contact to Order</a>
         </div>
         <p class="modal-note">You'll be taken to the retailer's website to complete your purchase.</p>
       </div>
@@ -210,9 +206,9 @@
   <!-- Cookie / privacy notice -->
   <div id="cookieBanner" class="cookie-banner" role="region" aria-label="Privacy notice" hidden>
     <p>We use cookies to remember your preferences (like dark mode) and to understand how visitors use the store. See our <a href="/privacy">Privacy Policy</a>.</p>
-    <button id="cookieAccept" class="btn btn-primary" type="button" data-cursor>Got it</button>
+    <button id="cookieAccept" class="btn btn-primary" type="button">Got it</button>
   </div>
 
-  <script src="/js/store.js" defer></script>
+  <script src="/js/store.js?v=3" defer></script>
 </body>
 </html>

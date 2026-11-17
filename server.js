@@ -217,6 +217,7 @@ app.get('/api/settings', apiLimiter, (req, res) => {
   res.json({
     store_name: s.store_name || 'Demi Somi Finds',
     theme: THEMES.includes(s.theme) ? s.theme : 'lavender',
+    custom_theme: getJsonSetting('custom_theme', null),
     tagline: s.tagline || '',
     hero_headline: s.hero_headline || '',
     hero_subheadline: s.hero_subheadline || '',
@@ -604,10 +605,12 @@ app.delete('/api/admin/uploads', requireAuth, requireFullAdmin, (req, res) => {
 /* Admin: settings                                                     */
 /* ------------------------------------------------------------------ */
 // Store themes (two-color combinations). 'lavender' is the default — the "Plum + Gold" logo-colors theme (key kept as 'lavender' so existing installs keep working).
-const THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage'];
+// 'custom' is the owner's own two-color theme, built in the admin panel
+// from two color pickers and stored as the `custom_theme` setting.
+const THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage', 'custom'];
 
 const SETTING_KEYS = [
-  'store_name', 'theme', 'tagline', 'hero_headline', 'hero_subheadline',
+  'store_name', 'theme', 'custom_theme', 'tagline', 'hero_headline', 'hero_subheadline',
   'announcement_text', 'announcement_enabled', 'about_text', 'contact_email',
   'currency', 'trust_badges', 'disclosure_text', 'disclosure_enabled',
   'social_facebook', 'social_tiktok', 'social_instagram', 'social_youtube',
@@ -619,6 +622,7 @@ app.get('/api/admin/settings', requireAuth, requireFullAdmin, (req, res) => {
   const out = {};
   for (const key of SETTING_KEYS) {
     if (key === 'trust_badges') out[key] = getJsonSetting(key, []);
+    else if (key === 'custom_theme') out[key] = getJsonSetting(key, null);
     else out[key] = s[key] ?? '';
   }
   res.json(out);
@@ -638,6 +642,15 @@ app.put('/api/admin/settings', requireAuth, requireFullAdmin, (req, res) => {
   str('tagline', 200);
   if (body.theme !== undefined && !THEMES.includes(body.theme)) {
     errors.push(`theme must be one of: ${THEMES.join(', ')}.`);
+  }
+  const isHexColor = (v) => typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v);
+  if (body.custom_theme !== undefined) {
+    const ct = body.custom_theme;
+    if (typeof ct !== 'object' || ct === null || Array.isArray(ct) ||
+        !isHexColor(ct.primary) || !isHexColor(ct.secondary) ||
+        (ct.name !== undefined && (typeof ct.name !== 'string' || ct.name.length > 40))) {
+      errors.push('custom_theme must have two colors (primary and secondary, like #4a2145) and an optional short name.');
+    }
   }
   str('hero_headline', 160);
   str('hero_subheadline', 400);
@@ -688,6 +701,12 @@ app.put('/api/admin/settings', requireAuth, requireFullAdmin, (req, res) => {
       if (body[key] === undefined) continue;
       if (key === 'trust_badges') {
         setSetting(key, JSON.stringify(body.trust_badges));
+      } else if (key === 'custom_theme') {
+        setSetting(key, JSON.stringify({
+          primary: body.custom_theme.primary.toLowerCase(),
+          secondary: body.custom_theme.secondary.toLowerCase(),
+          name: (body.custom_theme.name || '').trim().slice(0, 40),
+        }));
       } else if (key === 'announcement_enabled' || key === 'disclosure_enabled') {
         const v = body[key];
         setSetting(key, (v === true || v === 1 || v === '1') ? '1' : '0');

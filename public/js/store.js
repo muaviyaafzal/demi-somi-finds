@@ -1,9 +1,11 @@
 /**
  * store.js — Demi Somi Finds public storefront.
  * All product data comes from the API (never hardcoded in HTML).
- * Motion: IntersectionObserver reveals, hero parallax, custom cursor,
- * magnetic buttons, scroll progress, product hover highlight (CSS) with
- * a tap equivalent for touch. Respects prefers-reduced-motion.
+ * Motion: IntersectionObserver reveals, hero parallax, scroll progress,
+ * product hover highlight (CSS) with a tap equivalent for touch.
+ * The native mouse cursor is used everywhere — there is no custom
+ * cursor (removed 2026-11-17: it hid the real pointer and lagged).
+ * Respects prefers-reduced-motion.
  */
 'use strict';
 
@@ -62,10 +64,88 @@
   /* ---------------------------------------------------------------- */
   /* Store theme (admin-selectable, two-color combinations)            */
   /* ---------------------------------------------------------------- */
-  const STORE_THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage'];
-  function applyTheme(theme) {
+  const STORE_THEMES = ['lavender', 'sunset', 'rose', 'plum', 'sage', 'custom'];
+
+  /* Hex color helpers for the custom theme: a full palette is derived
+     from the owner's two picked colors (primary + secondary). */
+  function hexToRgb(hex) {
+    const m = /^#([0-9a-fA-F]{6})$/.exec(String(hex || '').trim());
+    if (!m) return null;
+    const n = parseInt(m[1], 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  // Mix a hex color toward another hex color (0 = keep, 1 = target).
+  function mixHex(hex, target, ratio) {
+    const a = hexToRgb(hex);
+    const b = hexToRgb(target);
+    if (!a || !b) return hex;
+    const c = a.map((v, i) => Math.round(v + (b[i] - v) * ratio));
+    return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('');
+  }
+  function rgba(hex, alpha) {
+    const rgb = hexToRgb(hex);
+    return rgb ? `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})` : hex;
+  }
+  // Relative luminance (0 = black, 1 = white) — decides whether button
+  // text on a custom-theme color should be white or dark.
+  function luminance(hex) {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return 0;
+    const lin = rgb.map((v) => {
+      const s = v / 255;
+      return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+  }
+
+  // Inline variables set by the custom theme, so they can be cleared
+  // when the owner switches back to a preset theme.
+  const CUSTOM_VARS = [
+    '--color-primary', '--color-primary-deep', '--color-primary-soft', '--color-primary-pale',
+    '--color-sage', '--color-sage-deep', '--color-sage-pale',
+    '--color-accent', '--color-accent-deep', '--color-accent-pale',
+    '--color-blush', '--color-blush-pale', '--shadow-glow',
+    '--color-btn-primary-end', '--color-btn-accent-end',
+    '--color-on-primary', '--color-on-accent',
+  ];
+  function clearCustomVars() {
+    CUSTOM_VARS.forEach((v) => document.documentElement.style.removeProperty(v));
+  }
+  function applyCustomTheme(custom) {
+    const primary = hexToRgb(custom && custom.primary) ? custom.primary : '#4a2145';
+    const secondary = hexToRgb(custom && custom.secondary) ? custom.secondary : '#c9a24b';
+    const vars = {
+      '--color-primary': primary,
+      '--color-primary-deep': mixHex(primary, '#000000', 0.35),
+      '--color-primary-soft': mixHex(primary, '#ffffff', 0.55),
+      '--color-primary-pale': mixHex(primary, '#ffffff', 0.88),
+      '--color-sage': secondary,
+      '--color-sage-deep': mixHex(secondary, '#000000', 0.3),
+      '--color-sage-pale': mixHex(secondary, '#ffffff', 0.85),
+      '--color-accent': secondary,
+      '--color-accent-deep': mixHex(secondary, '#000000', 0.3),
+      '--color-accent-pale': mixHex(secondary, '#ffffff', 0.85),
+      '--color-blush': mixHex(primary, '#ffffff', 0.7),
+      '--color-blush-pale': mixHex(primary, '#ffffff', 0.92),
+      '--shadow-glow': `0 20px 55px ${rgba(primary, 0.35)}`,
+      '--color-btn-primary-end': mixHex(primary, '#000000', 0.45),
+      '--color-btn-accent-end': mixHex(secondary, '#000000', 0.45),
+      // Light picked color => dark button text, so the button label
+      // stays readable no matter which two colors he chooses.
+      '--color-on-primary': luminance(primary) > 0.5 ? '#241031' : '#fff',
+      '--color-on-accent': luminance(secondary) > 0.5 ? '#241031' : '#fff',
+    };
+    Object.entries(vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+  }
+
+  function applyTheme(theme, customTheme) {
     const t = STORE_THEMES.includes(theme) ? theme : 'lavender';
     document.documentElement.setAttribute('data-store-theme', t);
+    clearCustomVars();
+    // The custom theme has no CSS block of its own — its palette is
+    // derived from the two picked colors and set as inline variables
+    // (backgrounds and text are left alone, so dark mode still works).
+    if (t === 'custom') applyCustomTheme(customTheme);
   }
 
   /* Category tint shown behind a product image only if that image
@@ -83,17 +163,20 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* Social icons (inline SVG)                                         */
+  /* Social icons — the REAL brand marks in the REAL brand colors.     */
+  /* Facebook: blue #1877F2 "f" · Instagram: official gradient tile    */
+  /* with a white camera · TikTok: black note with cyan #25F4EE and    */
+  /* pink #FE2C55 offset shadows · YouTube: red #FF0000 play button.   */
   /* ---------------------------------------------------------------- */
   const SOCIAL_ICONS = {
     facebook:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8V11H8v3h2.5v7h3z"/></svg>',
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8V11H8v3h2.5v7h3z"/></svg>',
     tiktok:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 3c.4 2.2 1.8 3.7 4.1 3.9v3c-1.6 0-3-.5-4.1-1.3v6.3c0 3.4-2.6 6.1-5.9 6.1A5.7 5.7 0 0 1 5 15.3c0-3.2 2.6-5.8 5.8-5.8.3 0 .7 0 1 .1v3.1c-.3-.1-.6-.2-1-.2-1.5 0-2.7 1.2-2.7 2.8 0 1.5 1.2 2.7 2.7 2.7 1.6 0 2.8-1.3 2.8-2.9V3h3z"/></svg>',
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#FE2C55"><path d="M16.6 3c.4 2.2 1.8 3.7 4.1 3.9v3c-1.6 0-3-.5-4.1-1.3v6.3c0 3.4-2.6 6.1-5.9 6.1A5.7 5.7 0 0 1 5 15.3c0-3.2 2.6-5.8 5.8-5.8.3 0 .7 0 1 .1v3.1c-.3-.1-.6-.2-1-.2-1.5 0-2.7 1.2-2.7 2.8 0 1.5 1.2 2.7 2.7 2.7 1.6 0 2.8-1.3 2.8-2.9V3h3z" transform="translate(-0.9 0)"/></g><g fill="#25F4EE"><path d="M16.6 3c.4 2.2 1.8 3.7 4.1 3.9v3c-1.6 0-3-.5-4.1-1.3v6.3c0 3.4-2.6 6.1-5.9 6.1A5.7 5.7 0 0 1 5 15.3c0-3.2 2.6-5.8 5.8-5.8.3 0 .7 0 1 .1v3.1c-.3-.1-.6-.2-1-.2-1.5 0-2.7 1.2-2.7 2.8 0 1.5 1.2 2.7 2.7 2.7 1.6 0 2.8-1.3 2.8-2.9V3h3z" transform="translate(0.9 0)"/></g><path fill="#000000" d="M16.6 3c.4 2.2 1.8 3.7 4.1 3.9v3c-1.6 0-3-.5-4.1-1.3v6.3c0 3.4-2.6 6.1-5.9 6.1A5.7 5.7 0 0 1 5 15.3c0-3.2 2.6-5.8 5.8-5.8.3 0 .7 0 1 .1v3.1c-.3-.1-.6-.2-1-.2-1.5 0-2.7 1.2-2.7 2.8 0 1.5 1.2 2.7 2.7 2.7 1.6 0 2.8-1.3 2.8-2.9V3h3z"/></svg>',
     instagram:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8C2.3 4 3.9 2.4 7.1 2.3 8.4 2.2 8.8 2.2 12 2.2zm0 3.6a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.5a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9z"/></svg>',
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="igGrad-UID" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset="0.35" stop-color="#fa7e1e"/><stop offset="0.6" stop-color="#d62976"/><stop offset="0.8" stop-color="#962fbf"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5.5" fill="url(#igGrad-UID)"/><rect x="4.6" y="4.6" width="14.8" height="14.8" rx="4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.5" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="17.1" cy="6.9" r="1.3" fill="#fff"/></svg>',
     youtube:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 7.2s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.4-1C16.6 3.6 12 3.6 12 3.6s-4.6 0-7.7.3c-.5.1-1.5.1-2.4 1-.7.7-.9 2.3-.9 2.3S.8 9.1.8 11v1.8c0 1.9.2 3.8.2 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.6 1 1.9.2 7.5.3 7.5.3s4.6 0 7.7-.4c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.3.9-2.3s.2-1.9.2-3.8V11c0-1.9-.2-3.8-.2-3.8zM9.8 15.1V8.4l6.2 3.4-6.2 3.3z"/></svg>',
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.6" y="5" width="20.8" height="14" rx="4" fill="#FF0000"/><path d="M10.2 9.3v5.4l4.9-2.7z" fill="#fff"/></svg>',
   };
 
   const SOCIAL_LABELS = {
@@ -103,16 +186,17 @@
     youtube: 'YouTube Shorts',
   };
 
-  function renderSocialIcons(container, size) {
+  function renderSocialIcons(container, uid) {
     if (!container || !settings) return;
     const social = settings.social || {};
     container.innerHTML = Object.keys(SOCIAL_ICONS).map((key) => {
       const url = safeUrl(social[key] || '');
       const label = SOCIAL_LABELS[key];
+      const icon = SOCIAL_ICONS[key].split('UID').join(uid || 'x');
       if (url) {
-        return `<a class="social-icon" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="${label} (opens in a new tab)" data-cursor>${SOCIAL_ICONS[key]}</a>`;
+        return `<a class="social-icon" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="${label} (opens in a new tab)">${icon}</a>`;
       }
-      return `<span class="social-icon disabled" aria-label="${label} — link not set yet" title="${label} — link not set yet">${SOCIAL_ICONS[key]}</span>`;
+      return `<span class="social-icon disabled" aria-label="${label} — link not set yet" title="${label} — link not set yet">${icon}</span>`;
     }).join('');
   }
 
@@ -122,7 +206,7 @@
   function applySettings() {
     if (!settings) return;
     document.title = `${settings.store_name || 'Demi Somi Finds'} — Beauty Finds You'll Love`;
-    applyTheme(settings.theme);
+    applyTheme(settings.theme, settings.custom_theme);
     $('#heroHeadline').textContent = settings.hero_headline || 'Beauty finds that feel made for you.';
     $('#heroSubheadline').textContent = settings.hero_subheadline || '';
     $('#heroTagline').textContent = settings.tagline || '';
@@ -172,8 +256,8 @@
         <p>${escapeHtml(whyCopy[badge] || 'A little detail that makes shopping here feel good.')}</p>
       </article>`).join('');
 
-    renderSocialIcons($('#footerSocial'));
-    renderSocialIcons($('#contactSocial'));
+    renderSocialIcons($('#footerSocial'), 'footer');
+    renderSocialIcons($('#contactSocial'), 'contact');
     observeReveals();
   }
 
@@ -203,7 +287,7 @@
   function renderChips() {
     const categories = ['All', ...new Set(products.map((p) => p.category).filter(Boolean))];
     $('#categoryChips').innerHTML = categories.map((cat) => `
-      <button type="button" class="chip ${cat === activeCategory ? 'active' : ''}" data-category="${escapeHtml(cat)}" data-cursor>${escapeHtml(cat)}</button>
+      <button type="button" class="chip ${cat === activeCategory ? 'active' : ''}" data-category="${escapeHtml(cat)}">${escapeHtml(cat)}</button>
     `).join('');
     $$('#categoryChips .chip').forEach((chip) => {
       chip.addEventListener('click', () => {
@@ -218,7 +302,7 @@
     const list = filteredProducts();
     noResults.hidden = list.length !== 0;
     grid.innerHTML = list.map((p, i) => `
-      <article class="product-card reveal" data-id="${p.id}" style="--reveal-delay:${Math.min(i, 8) * 70}ms" tabindex="0" data-cursor-view>
+      <article class="product-card reveal" data-id="${p.id}" style="--reveal-delay:${Math.min(i, 8) * 70}ms" tabindex="0">
         <div class="card-media">
           <div class="card-glow" style="--glow-fallback:${glowFallback(p.category)}" aria-hidden="true">
             <img src="${escapeHtml(productImage(p))}" alt="" loading="lazy" decoding="async">
@@ -232,7 +316,7 @@
           <p class="card-desc">${escapeHtml(p.description)}</p>
           <div class="card-foot">
             <span class="price">${escapeHtml(formatPrice(p.price))}</span>
-            <button type="button" class="btn btn-primary" data-view="${p.id}" data-cursor>View Details</button>
+            <button type="button" class="btn btn-primary" data-view="${p.id}">View Details</button>
           </div>
         </div>
       </article>`).join('');
@@ -401,6 +485,32 @@
   }));
 
   /* ---------------------------------------------------------------- */
+  /* Hero background motion: scroll parallax (in onScroll above) plus  */
+  /* mouse drift — the floating beauty visuals shift subtly as the     */
+  /* mouse moves. Transform/opacity only, no custom cursor involved,   */
+  /* and disabled when the user prefers reduced motion.                */
+  /* ---------------------------------------------------------------- */
+  const heroEl = $('#hero');
+  if (heroEl && finePointer && !reducedMotion) {
+    heroEl.addEventListener('mousemove', (e) => {
+      const rect = heroEl.getBoundingClientRect();
+      const nx = (e.clientX - rect.left) / rect.width - 0.5;
+      const ny = (e.clientY - rect.top) / rect.height - 0.5;
+      $$('.float-el', heroEl).forEach((el) => {
+        const depth = Number(el.dataset.depth || 12);
+        el.style.marginLeft = `${nx * depth * 0.6}px`;
+        el.style.marginTop = `${ny * depth * 0.6}px`;
+      });
+    });
+    heroEl.addEventListener('mouseleave', () => {
+      $$('.float-el', heroEl).forEach((el) => {
+        el.style.marginLeft = '';
+        el.style.marginTop = '';
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------- */
   /* Dark mode                                                         */
   /* ---------------------------------------------------------------- */
   const themeToggle = $('#themeToggle');
@@ -441,82 +551,6 @@
     setTimeout(dismissIntro, 1400);
     intro.addEventListener('click', dismissIntro);
     document.addEventListener('keydown', dismissIntro, { once: true });
-  }
-
-  /* ---------------------------------------------------------------- */
-  /* Custom cursor + magnetic buttons (desktop, fine pointer only)     */
-  /* ---------------------------------------------------------------- */
-  if (finePointer && !reducedMotion) {
-    document.body.classList.add('has-cursor');
-    const dot = $('#cursorDot');
-    const ring = $('#cursorRing');
-    const label = $('#cursorLabel');
-    let mx = -100, my = -100, rx = -100, ry = -100;
-    let rafId = null;
-
-    function loop() {
-      rx += (mx - rx) * 0.16;
-      ry += (my - ry) * 0.16;
-      dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
-      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
-      rafId = requestAnimationFrame(loop);
-    }
-    document.addEventListener('mousemove', (e) => {
-      mx = e.clientX;
-      my = e.clientY;
-      if (rafId === null) loop();
-    }, { passive: true });
-
-    document.addEventListener('mouseover', (e) => {
-      const viewTarget = e.target.closest('[data-cursor-view]');
-      const interactive = e.target.closest('a, button, input, textarea, select, [data-cursor]');
-      if (viewTarget) {
-        ring.classList.add('is-view');
-        ring.classList.remove('is-hover');
-        label.textContent = 'View';
-      } else if (interactive) {
-        ring.classList.add('is-hover');
-        ring.classList.remove('is-view');
-        label.textContent = '';
-      } else {
-        ring.classList.remove('is-hover', 'is-view');
-        label.textContent = '';
-      }
-    });
-
-    // Magnetic buttons: gently pull toward the cursor.
-    $$('.magnetic').forEach((btn) => {
-      btn.addEventListener('mousemove', (e) => {
-        const rect = btn.getBoundingClientRect();
-        const dx = e.clientX - (rect.left + rect.width / 2);
-        const dy = e.clientY - (rect.top + rect.height / 2);
-        btn.style.transform = `translate(${dx * 0.12}px, ${dy * 0.18}px)`;
-      });
-      btn.addEventListener('mouseleave', () => {
-        btn.style.transform = '';
-      });
-    });
-
-    // Cursor-reactive hero: floating shapes drift with the mouse.
-    const hero = $('#hero');
-    if (hero) {
-      hero.addEventListener('mousemove', (e) => {
-        const rect = hero.getBoundingClientRect();
-        const nx = (e.clientX - rect.left) / rect.width - 0.5;
-        const ny = (e.clientY - rect.top) / rect.height - 0.5;
-        $$('.float-el', hero).forEach((el) => {
-          const depth = Number(el.dataset.depth || 12);
-          el.style.marginLeft = `${nx * depth * 0.6}px`;
-          el.style.marginTop = `${ny * depth * 0.6}px`;
-        });
-      });
-      hero.addEventListener('mouseleave', () => {
-        $$('.float-el', hero).forEach((el) => {
-          el.style.marginLeft = '';
-          el.style.marginTop = '';
-        });
-      });
-    }
   }
 
   /* ---------------------------------------------------------------- */
