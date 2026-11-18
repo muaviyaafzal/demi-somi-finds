@@ -203,11 +203,28 @@
   /* ---------------------------------------------------------------- */
   /* Render: settings-driven content                                   */
   /* ---------------------------------------------------------------- */
+  /* Headline: " | " splits the second line, shown in lavender italic
+     (the front-page look). No pipe = one line, no accent. Built with
+     text nodes so admin text can never inject HTML. */
+  function renderHeadline(text) {
+    const el = $('#heroHeadline');
+    const parts = (text || 'Beauty finds that feel | made for you.').split(' | ');
+    el.textContent = '';
+    el.appendChild(document.createTextNode(parts[0]));
+    if (parts[1]) {
+      el.appendChild(document.createTextNode(' '));
+      const accent = document.createElement('span');
+      accent.className = 'hero-hl-accent';
+      accent.textContent = parts[1];
+      el.appendChild(accent);
+    }
+  }
+
   function applySettings() {
     if (!settings) return;
     document.title = `${settings.store_name || 'Demi Somi Finds'} — Beauty Finds You'll Love`;
     applyTheme(settings.theme, settings.custom_theme);
-    $('#heroHeadline').textContent = settings.hero_headline || 'Beauty finds that feel made for you.';
+    renderHeadline(settings.hero_headline);
     $('#heroSubheadline').textContent = settings.hero_subheadline || '';
     $('#heroTagline').textContent = settings.tagline || '';
     $('#aboutText').textContent = settings.about_text || '';

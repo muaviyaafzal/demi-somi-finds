@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS = {
   // Same colors as the default dark theme until he picks his own.
   custom_theme: JSON.stringify({ primary: '#8b4fc0', secondary: '#d9a441', name: 'My Theme' }),
   tagline: 'Beauty finds you will love — curated for every skin tone.',
-  hero_headline: 'Beauty finds that feel made for you.',
+  hero_headline: 'Beauty finds that feel | made for you.',
   hero_subheadline:
     'Soft, everyday luxury — lipsticks, skincare and little rituals that brighten your day. Handpicked, honestly reviewed, and made to be shared.',
   announcement_text: 'Free shipping on orders over $35',
